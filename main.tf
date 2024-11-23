@@ -1,7 +1,7 @@
 resource "aws_instance" "public" {
-  ami                         = "ami-04c913012f8977029"
+  ami                         = data.aws_ami.amazon2023.id #"ami-04c913012f8977029"
   instance_type               = "t2.micro"
-  subnet_id                   = "subnet-0caaf48818e0596cc" #Public Subnet ID, e.g. subnet-xxxxxxxxxxx
+  subnet_id                   = data.aws_subnets.public.ids[0] #Public Subnet ID, e.g. subnet-xxxxxxxxxxx "subnet-0caaf48818e0596cc"
   associate_public_ip_address = true
   key_name                    = "victor-terraform-pair" #Change to your keyname, e.g. jazeel-key-pair
   vpc_security_group_ids      = [aws_security_group.allow_ssh.id]
@@ -14,7 +14,7 @@ resource "aws_instance" "public" {
 resource "aws_security_group" "allow_ssh" {
   name        = "victor-terraform-securitygroup" #Security group name, e.g. jazeel-terraform-security-group
   description = "Allow SSH inbound"
-  vpc_id      = "vpc-01c494fe1e8787c82" #VPC ID (Same VPC as your EC2 subnet above), E.g. vpc-xxxxxxx
+  vpc_id      = data.aws_vpc.selected.id #VPC ID (Same VPC as your EC2 subnet above), E.g. vpc-xxxxxxx
 }
 
 resource "aws_vpc_security_group_ingress_rule" "allow_tls_ipv4" {
@@ -24,3 +24,4 @@ resource "aws_vpc_security_group_ingress_rule" "allow_tls_ipv4" {
   ip_protocol       = "tcp"
   to_port           = 22
 }
+
